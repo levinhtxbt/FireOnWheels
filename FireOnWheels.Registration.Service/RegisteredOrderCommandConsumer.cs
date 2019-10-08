@@ -43,9 +43,9 @@ namespace FireOnWheels.Registration.Service
             Console.WriteLine("Publishing order registered event");
 
             //notify subscribers that a order is registered
-            //var orderRegisteredEvent = new OrderRegisteredEvent(command, id);
-            ////publish event
-            //rabbitMqManager.SendOrderRegisteredEvent(orderRegisteredEvent);
+            var orderRegisteredEvent = new OrderRegisteredEvent(command, id);
+            //publish event
+            rabbitMqManager.SendOrderRegisteredEvent(orderRegisteredEvent);
         }
     }
 }

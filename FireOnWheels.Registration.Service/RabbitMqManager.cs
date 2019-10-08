@@ -37,7 +37,7 @@ namespace FireOnWheels.Registration.Service
                 consumer: consumer);
         }
 
-        public void SendOrderRegisteredEvent(IRegisterOrderCommand command)
+        public void SendOrderRegisteredEvent(IOrderRegisteredEvent command)
         {
             _channel.ExchangeDeclare(
                 exchange: RabbitMqConstants.OrderRegisteredExchange, 
