@@ -2,7 +2,7 @@
 using MassTransit;
 using System;
 
-namespace FireOnWheels.Finance.Service
+namespace FireOnWheels.Notification.Service
 {
     class Program
     {
@@ -10,9 +10,13 @@ namespace FireOnWheels.Finance.Service
         {
             var bus = BusConfigurator.ConfigureBus((cfg, host) =>
             {
-                cfg.ReceiveEndpoint(host, RabbitMqConstants.FinanceServiceQueue, e =>
+                cfg.ReceiveEndpoint(RabbitMqConstants.NotificationServiceQueue, e =>
                 {
-                    e.Consumer<OrderRegisteredConsumer>();
+                    e.Handler<IOrderRegisteredEvent>(c =>
+                        {
+                            return Console.Out.WriteLineAsync($"Customer notification sent: " + $"Order id {c.Message.OrderId}");
+                        });
+
                 });
             });
 
@@ -22,7 +26,8 @@ namespace FireOnWheels.Finance.Service
             Console.ReadLine();
 
             bus.Stop();
+
+
         }
     }
 }
- 

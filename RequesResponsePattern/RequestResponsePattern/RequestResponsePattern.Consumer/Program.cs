@@ -3,34 +3,24 @@ using System;
 
 namespace RequestResponsePattern.Consumer
 {
-    class Program
+    public class Program
     {
-        static async System.Threading.Tasks.Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            var bus = BusConfigurator.ConfigureBus();
-            var address = new Uri($"{RabbitMqConstants.RabbitMqUri}{RabbitMqConstants.NotificationServiceQueue}");
-            var timeout = TimeSpan.FromSeconds(10);
-
-            var requestClient = bus.CreateRequestClient<IRequestMessage>(
-                address);
+            var bus = BusConfigurator.ConfigureBus((cfg, host) =>
+            {
+                cfg.ReceiveEndpoint(host, RabbitMqConstants.NotificationServiceQueue, e =>
+                {
+                    e.Consumer<ReceiveMessageConsumer>();
+                });
+            });
 
             bus.Start();
 
-            Console.WriteLine("The message has been sent");
-
-            var result = await requestClient.GetResponse<IResponseMessage>(new RequestMessage
-            {
-                Id = 1,
-                Content = "hello fucker"
-            });
-
-            Console.WriteLine(result.Message.Content);
-
+            Console.WriteLine("Listening message......");
             Console.ReadKey();
 
-            //var client = new MessageRequestClient<RequestMessage, ResponseMessage>(bus,
-            //    address, timeout, timeout);
-
+            bus.Stop();
 
         }
     }
